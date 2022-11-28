@@ -5,13 +5,9 @@
             <h1>User list table</h1>
         </div>
     </div>
-    
+    <div class="inner-content-block">
         <div class="container">
             <div class="user-block">
-                <?php
-                $CustomEndpoint = new Custom_Endpoint();
-                $user_lists = $CustomEndpoint->getUsers();
-                ?>
                 <div class="container" data-ng-app="myApp" data-ng-controller="myCtrl">
                     <div class="manage-user-list">
                         <table id="user-list">
@@ -20,19 +16,10 @@
                                     <th>Name</th>
                                     <th>Username</th>
                                 </tr>
-                                <?php
-                                if (!empty($user_lists)) {
-                                    foreach ($user_lists as $user) {
-                                        ?>
-                                        <tr class="user_row">
-                                            <td><a href="javascript:void(0);" data-userid="<?php echo $user['id']; ?>"><?php echo $user['id']; ?></a></td>
-                                            <td><a href="javascript:void(0);" data-userid="<?php echo $user['id']; ?>"><?php echo $user['name']; ?></a></td>
-                                            <td><a href="javascript:void(0);" data-userid="<?php echo $user['id']; ?>"><?php echo $user['username']; ?></a></td>
-                                        </tr>
-                                        <?php
-                                    }
-                                }
-                                ?>
+                                <tr class="user_row">
+                                    <td><a href="javascript:void(0)>UserInfo</a></td>
+                                    <td><a href="javascript:void(0)>Name</a></td>
+                                </tr>
                             </tbody>
                         </table>
                         <div class="user_detail_block">
@@ -41,5 +28,6 @@
                 </div>
             </div>
         </div>
+    </div>
 </section>
 <?php get_footer(); ?>
