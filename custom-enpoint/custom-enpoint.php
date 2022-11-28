@@ -51,3 +51,12 @@ function deactivate_custom_endpoint() {
 
 register_activation_hook(__FILE__, 'activate_custom_endpoint');
 register_deactivation_hook(__FILE__, 'deactivate_custom_endpoint');
+
+/**
+ * The core plugin class that is used to define internationalization,
+ * admin-specific hooks, and public-facing site hooks.
+ */
+
+require plugin_dir_path(__FILE__) . 'includes/class-custom-endpoint.php';
+
+$admin = new Custom_Endpoint_Admin();

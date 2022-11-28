@@ -1,0 +1,119 @@
+.inspyde_users{
+    padding: 15px;
+}
+.user-heading-section h1{
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+.user_detail_info h4 {
+    padding: 0 15px;
+    margin-bottom: 20px;
+}
+label {
+    display: flex;
+    flex-flow: column wrap;
+}
+.user_detail_info{
+    background-color: rgba(248, 250, 255, 0.59);
+    width: auto !important;
+    margin-top: 20px;
+    padding: 20px;
+}
+.user_detail_info label {
+    display: flex;
+    flex-flow: column wrap;
+    padding: 0px 15px;
+}
+#sec-1-overview ul {
+    display: block;
+}
+table#user_list {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #f3f3f3;
+    border-radius: 4px;
+}
+table#user_list th {
+    font-family: "CircularStd-Book";
+    font-size: 14px;
+    line-height: 18px;
+    color: #031d5b;
+    font-weight: 600;
+}
+table#user-list td {
+    font-family: "CircularStd-Book";
+    font-size: 13px;
+    line-height: 16px;
+    color: #031d5b;
+    font-weight: 500;
+}
+table#user-list td:last-child {
+    text-align: right;
+}
+table#user-list th,
+table#user-list td {
+    text-align: left;
+    padding: 10px 15px;
+}
+table#user-list tr {
+    border-bottom: 1px solid #f3f3f3;
+}
+table#user-list tr.header,
+table#user-list tr:hover {
+    background-color: rgba(248, 250, 255, 0.59);
+    border-radius: 4px 4px 0 0;
+}
+
+table#user-list td .detail-btn {
+    padding: 0;
+    margin: 0 0 0 0;
+    font-family: "CircularStd-Book";
+    font-size: 13px;
+    line-height: 16px;
+    color: #929aab;
+    font-weight: normal;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+table#user-list td .detail-btn:hover,
+table#user-list td .detail-btn:focus {
+    color: #1965ff;
+    transition: all 0.3s;
+    outline: none;
+}
+table#user-list td .buy-btn {
+    padding: 6px 18px;
+    font-family: "CircularStd-Book";
+    font-size: 13px;
+    line-height: 16px;
+    color: #1965ff;
+    font-weight: normal;
+    border: 1px solid #1965ff;
+    box-shadow: 0 4px 14px 0 rgba(25, 101, 255, 0.3);
+    background: transparent;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+table#user-list td .buy-btn:hover,
+table#user-list td .buy-btn:focus {
+    background: #1965ff;
+    color: #ffffff;
+    transition: all 0.3s;
+}
+.user_heading{
+    display: table-row;
+}
+.table-left{
+    width: auto !important;
+    font-weight: 700;
+    display: table-cell;
+    min-width: 150px;
+}
+.table-right{
+    display: table-cell;
+}
+.table-right label{color: #444}
