@@ -91,6 +91,60 @@ class Custom_Endpoint {
 
         return CUSTOM_ENDPOINT_USER_INCLUDE_PATH . 'includes/userlist-template.php';
     }
+
+    /* Define API url base on request Check for cache data and time if it's expired call user API */
+
+    public function requestUserApi($apiUrl) {
+        $curl = curl_init();
+        $userData = "";
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $apiUrl,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_HTTPHEADER => array(
+                "cache-control: no-cache",
+                "postman-token: 41dcec34-442e-0320-b354-fbea618cbbcd"
+            ),
+        ));
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            $userData = $response;
+        }
+        return $userData;
+    }
+
+     /* Define API url base on request, Checking for cache data and expiration time that set to 6 hours if it's expired user API will call and cached the data */
+
+     public function getUsers($userId = "") {
+        $cache_path = CUSTOM_ENDPOINT_USER_INCLUDE_PATH . 'cache/';
+        $id = 'userdatalist';
+        $apiUrl = Custom_Endpoint::USERDATA_API_BASE . "/users";
+        if (!empty($userId)) {
+            $id = 'user_id' . $userId;
+            $apiUrl = Custom_Endpoint::USERDATA_API_BASE . "/users/$userId";
+        }
+        $filename = $cache_path . $id;
+        if (file_exists($filename)) {
+            if ((time() - 21600 < filemtime($filename))) {
+                unlink($filename);
+                $response_data = $this->requestUserApi($apiUrl);
+                file_put_contents($filename, $response_data);
+            }
+            $response_data = file_get_contents($filename);
+        } else {
+            $response_data = $this->requestUserApi($apiUrl);
+            file_put_contents($filename, $response_data);
+        }
+        return json_decode($response_data, true);
+    }
     
 }
 
