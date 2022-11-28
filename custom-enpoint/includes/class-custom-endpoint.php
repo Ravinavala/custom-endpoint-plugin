@@ -6,11 +6,11 @@
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       https://customendpoint.com
+ * @link       https://inspyde.com
  * @since      3.0
  *
- * @package    Cusotmendpoint
- * @subpackage Cusotmendpoint/includes
+ * @package    Inspyde
+ * @subpackage Inspyde/includes
  */
 
 /**
@@ -25,7 +25,7 @@ class Custom_Endpoint {
     const USERDATA_API_BASE = 'https://jsonplaceholder.typicode.com';
 
     /**     * The unique identifier of this plugin. */
-    protected $inspyde;
+    protected $customendpoit;
 
     /*     * * The current version of the plugin */
     protected $version;
@@ -45,6 +45,8 @@ class Custom_Endpoint {
         add_action('template_include', array($this, 'redirectTemplate'));
         add_filter('query_vars', array($this, 'getQueryvar'));
         add_action('init', array($this, 'setRewriteRule'));
+        add_action('wp_ajax_fetch_user_details', array($this, 'fetch_user_details_callback'));
+        add_action('wp_ajax_nopriv_fetch_user_details', array($this, 'fetch_user_details_callback'));
 
         $this->customendpoint = get_option('inspyde_custom_endpoint');
     }
@@ -71,8 +73,8 @@ class Custom_Endpoint {
         ));
     }
 
-     /** set rewrite rule for userlist-table */
-     public function setRewriterule() {
+    /** set rewrite rule for userlist-table */
+    public function setRewriterule() {
         add_rewrite_rule($this->get_customendpoint() . '/?', 'index.php?' . $this->get_customendpoint() . '=parent-xml-page', 'top');
     }
 
@@ -121,9 +123,9 @@ class Custom_Endpoint {
         return $userData;
     }
 
-     /* Define API url base on request, Checking for cache data and expiration time that set to 6 hours if it's expired user API will call and cached the data */
+    /* Define API url base on request, Checking for cache data and expiration time that set to 6 hours if it's expired user API will call and cached the data */
 
-     public function getUsers($userId = "") {
+    public function getUsers($userId = "") {
         $cache_path = CUSTOM_ENDPOINT_USER_INCLUDE_PATH . 'cache/';
         $id = 'userdatalist';
         $apiUrl = Custom_Endpoint::USERDATA_API_BASE . "/users";
@@ -133,6 +135,7 @@ class Custom_Endpoint {
         }
         $filename = $cache_path . $id;
         if (file_exists($filename)) {
+            /*Check if file time if it's more than 6 hours old delete and regeenrate new file */
             if ((time() - 21600 < filemtime($filename))) {
                 unlink($filename);
                 $response_data = $this->requestUserApi($apiUrl);
@@ -145,7 +148,60 @@ class Custom_Endpoint {
         }
         return json_decode($response_data, true);
     }
-    
+
+    /* Ajax call back function, check for userid
+     * and return user data */
+
+    public function fetch_user_details_callback() {
+        check_ajax_referer('_wpnonce', 'security');
+        $output = "";
+        if (!empty($_POST)) {
+            $userId = $_POST['userid'];
+            $user_detail = $this->getUsers($userId);
+            if ($user_detail) {
+                $output .= '<div class="user_detail_info">';
+                $output .= '<h4> User Id:  ' . $userId . '</h4>';
+                $output .= '<div class="user_heading">
+                    <div class="table-left">
+                        <label>Name:</label>
+                        <label>Username:</label>
+                        <label>Email: </label>
+                        <label>Address:</label>
+                        <label>City:</label>
+                        <label>Zipcode:</label>
+                        <label>Geo:</label>
+                        <label>Phone: </label>
+                        <label>Website:</label>
+                        <label>Company:</label>
+                        <label>Company Phrase:</label>
+                        <label>Company Bs:</label>
+                    </div>';
+                $output .= '<div class="table-right"> 
+                    <label>' . $user_detail['name'] . '</label>
+                    <label>' . $user_detail['username'] . '</label>
+                    <label>' . $user_detail['email'] . '</label>
+                    <label>' . $user_detail['address']['street'] . ', ' . $user_detail['address']['suite'] . '</label>
+                    <label>' . $user_detail['address']['city'] . ' </label>
+                    <label>' . $user_detail['address']['zipcode'] . ' </label>
+                    <label>lat: ' . $user_detail['address']['geo']['lng'] . ' lng: ' . $user_detail['address']['geo']['lng'] . ' </label>
+                    <label>' . $user_detail['phone'] . ' </label>
+                    <label>' . $user_detail['website'] . ' </label>
+                    <label>' . $user_detail['company']['name'] . ' </label>
+                    <label>' . $user_detail['company']['catchPhrase'] . ' </label>
+                    <label>' . $user_detail['company']['bs'] . ' </label>
+                </div>
+                </div>
+            </div>';
+            } else {
+                $output .= '<div calss="error">Something went wrong! can you please try again later</div>';
+            }
+        } else {
+            $output .= '<div calss="error">Something went wrong! can you please try again later</div>';
+        }
+        echo $output;
+        exit();
+    }
+
 }
 
 $Custom_Endpoint = new Custom_Endpoint();
