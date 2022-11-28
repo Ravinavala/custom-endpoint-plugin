@@ -45,8 +45,6 @@ class Custom_Endpoint {
         add_action('template_include', array($this, 'redirectTemplate'));
         add_filter('query_vars', array($this, 'getQueryvar'));
         add_action('init', array($this, 'setRewriteRule'));
-        add_action('wp_ajax_fetch_user_details', array($this, 'fetch_user_details_callback'));
-        add_action('wp_ajax_nopriv_fetch_user_details', array($this, 'fetch_user_details_callback'));
 
         $this->customendpoint = get_option('inspyde_custom_endpoint');
     }
@@ -59,6 +57,10 @@ class Custom_Endpoint {
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-custom-endpoint-admin.php';
     }
 
+    public function get_customendpoint() {
+        return $this->customendpoint;
+    }
+
     public function print_script() {
         wp_enqueue_style('inspyde-user-table-css', CUSTOM_ENDPOINT_USER_PLUGIN_URL . '/assets/css/table.css', 5645645, true);
         wp_enqueue_script(array('jquery'));
@@ -67,6 +69,27 @@ class Custom_Endpoint {
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('_wpnonce')
         ));
+    }
+
+     /** set rewrite rule for userlist-table */
+     public function setRewriterule() {
+        add_rewrite_rule($this->get_customendpoint() . '/?', 'index.php?' . $this->get_customendpoint() . '=parent-xml-page', 'top');
+    }
+
+    /** Whitelist specifc query param * */
+    public function getQueryvar($query_vars) {
+        $query_vars[] = $this->get_customendpoint();
+        return $query_vars;
+    }
+
+    /** Check query param and redirect it to template file * */
+    public function redirectTemplate($template) {
+
+        if (get_query_var($this->get_customendpoint()) == false || get_query_var($this->get_customendpoint()) == '') {
+            return $template;
+        }
+
+        return CUSTOM_ENDPOINT_USER_INCLUDE_PATH . 'includes/userlist-template.php';
     }
     
 }
